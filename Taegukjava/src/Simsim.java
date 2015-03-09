@@ -38,7 +38,7 @@ public class Simsim
 		final int MOOK = 0;
 		final int JJI = 1;
 		final int BBA = 2;
-		final int[] rel = { 0b001, 0b100, 0b010 };
+		final int[] rel = { 0b110, 0b011, 0b101 };
 		final String[] str = { "MOOK","JJI","BBA" };
 		
 		Scanner scin = new Scanner(System.in);
