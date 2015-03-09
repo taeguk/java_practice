@@ -1,19 +1,66 @@
 import java.util.Scanner;
 
 
+class If2 {
+	public static void main()   
+	{
+		int store[] = new int[7];
+		for(int i=0; i<7; i++)
+		{
+			int n = (int)( 45*Math.random() ) + 1;
+			boolean isJungbok = false;
+			for(int j=0; j<i; j++) {
+				if(store[j] == n) {
+					isJungbok = true;
+					break;
+				}
+			}
+			if(isJungbok) {
+				i--;
+				continue;
+			}
+			store[i] = n;
+			System.out.println("random number : " + n);
+		}       
+	}     
+} 
+
 public class Simsim 
 {
 	public static void main(String[] args)
 	{
-		
+		If2.main();
+		//upDownGame();
 	}
 	
-	private void UpDownGame()
+	private static void mookJjiBba()
+	{
+		final int MOOK = 0;
+		final int JJI = 1;
+		final int BBA = 2;
+		final int[] rel = { 0b001, 0b100, 0b010 };
+		final String[] str = { "MOOK","JJI","BBA" };
+		
+		Scanner scin = new Scanner(System.in);
+		
+		while(true)
+		{
+			int comHand = (int)(3*Math.random());
+			System.out.print("MOOK("+MOOK+"), JJI("+JJI+"), BBA("+BBA+") >> ");
+			int userHand = scin.nextInt();
+			
+			System.out.println(" Computer's hand : " + str[comHand]);
+			System.out.println("    Your hand    : " + str[userHand]);
+			
+		}
+	}
+	
+	private static void upDownGame()
 	{
 		final int MINVAL = 1;
 		final int MAXVAL = 50;
 		
-		Scanner scin = new Scanner(System.in);
+		Scanner scin = new Scanner(System.in);	
 		int randomNum = (int)((MAXVAL+1)*Math.random()) + MINVAL;
 		
 		int tryCnt = 0;
