@@ -1,0 +1,6 @@
+john 2000
+zizi 2300
+mary 1000
+galvin 1500
+marbin 1300
+samboo 2000
