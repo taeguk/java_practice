@@ -2,7 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
-
+// Class name cannot be "20141500_±ÇÅÂ±¹_02"
 public class Assignment02 {
 	public static void main(String[] args) throws FileNotFoundException
 	{
