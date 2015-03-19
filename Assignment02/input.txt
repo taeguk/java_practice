@@ -4,3 +4,17 @@ mary 1000
 galvin 1500
 marbin 1300
 samboo 2000
+adora 1700
+basil 3000
+benedict 2100
+colin 2300
+daina 1100
+eden 1800
+fleta 2900
+gillbert 2600
+geoffrey 1200
+hannah 1400
+isis 2400
+jack 700
+kali 4000
+jud 2500
