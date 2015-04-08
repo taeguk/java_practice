@@ -22,6 +22,14 @@ public class Book
 	public int getPrice() { return this.price; }
 	public int getInventory() { return this.inventory; }
 	
+	public int decreaseInventory()
+	{
+		if(inventory <= 0)
+			return -1;
+		this.inventory --;
+		return this.inventory;
+	}
+	
 	public void printBookInfo()
 	{
 		System.out.println("Title : " + this.bookTitle);
