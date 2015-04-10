@@ -4,10 +4,10 @@ public class Book
 	private String bookTitle;
 	private String author;
 	private String publisher;
-	private int price;
+	private double price;
 	private int inventory;
 	
-	public Book(String bookTitle, String author, String publisher, int price, int inventory)
+	public Book(String bookTitle, String author, String publisher, double price, int inventory)
 	{
 		this.bookTitle = bookTitle;
 		this.author = author;
@@ -19,7 +19,7 @@ public class Book
 	public String getBookTitle() { return this.bookTitle; }
 	public String getAuthor() { return this.author; }
 	public String getPublisher() { return this.publisher; }
-	public int getPrice() { return this.price; }
+	public double getPrice() { return this.price; }
 	public int getInventory() { return this.inventory; }
 	
 	public int decreaseInventory()

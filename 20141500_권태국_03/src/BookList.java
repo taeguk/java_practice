@@ -10,7 +10,7 @@ public class BookList
 	{
 		for(int i = 0; i < bookList.size(); i++) {
 			Book book = bookList.get(i);
-			if(book.getBookTitle() == bookTitle) {
+			if(book.getBookTitle().equals(bookTitle)) {
 				return book;
 			}
 		}
@@ -27,21 +27,42 @@ public class BookList
 		return book;
 	}
 	
-	public Book insertBook(String bookTitle, String author, String publisher, int price, int inventory)
+	public Book insertBook(String bookTitle, String author, String publisher, double price, int inventory)
 	{
 		Book book = new Book(bookTitle, author, publisher, price, inventory);
-		bookList.add(book);
+		int idx = bookList.size();
+		for(int i = 0; i < bookList.size(); i++) {
+			if(bookList.get(i).getBookTitle().compareTo(book.getBookTitle()) > 0) {
+				idx = i;
+			}
+		}
+		bookList.add(idx, book);
 		return book;
 	}
 	
 	public void display()
 	{
-		Book[] orderedBooks = new Book[bookList.size()];
+		/*
+		Book[] sortedBooks = new Book[bookList.size()];
 		for(int i = 0; i < bookList.size(); i++) {
 			Book book = bookList.get(i);
+			boolean check = false;
 			for(int j = 0; j < i; j++) {
-				if(orderedBooks[j].getBookTitle())
+				if(sortedBooks[j].getBookTitle().compareTo(book.getBookTitle()) > 0) {
+					for(int k = i; k > j; k--)
+						sortedBooks[k] = sortedBooks[k-1];
+					sortedBooks[j] = book;
+					check = true;
+					break;
+				}
 			}
+			if(!check)
+				sortedBooks[i] = book;
 		}
+		for(int i = 0; i < sortedBooks.length; i++)
+			System.out.println(sortedBooks[i].getBookTitle());
+		*/
+		for(int i = 0; i < bookList.size(); i++)
+			System.out.println(bookList.get(i).getBookTitle());
 	}
 }
