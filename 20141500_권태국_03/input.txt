@@ -1,4 +1,4 @@
-search Claudius the God
+search claudius the god
 buy life of pi
-insert Yellow Star#Jennifer Roy#Two Lions#4.99#9
+insert yellow star#jennifer roy#two lions#4.99#9
 display
