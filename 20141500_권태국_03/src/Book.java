@@ -32,10 +32,12 @@ public class Book
 	
 	public void printBookInfo()
 	{
+		System.out.println("------------- Book Info -------------");
 		System.out.println("Title : " + this.bookTitle);
 		System.out.println("Author : " + this.author);
 		System.out.println("Publisher : " + this.publisher);
 		System.out.println("Price : " + this.price);
 		System.out.println("Inventory : " + this.inventory);
+		System.out.println("-------------------------------------");
 	}
 }

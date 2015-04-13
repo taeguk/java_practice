@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 public class BookList 
 {
@@ -17,13 +18,26 @@ public class BookList
 		return null;
 	}
 	
-	public Book buyBook(String bookTitle)
+	public Book buyBook(Book book)
 	{
-		Book book = searchBook(bookTitle);
 		if(book == null)
 			return null;
 		if(book.decreaseInventory() < 0)
 			return null;
+		return book;
+	}
+	
+	public Book insertBook(String line) throws Exception
+	{
+		StringTokenizer st = new StringTokenizer(line, "#");
+	    
+		String bookTitle = st.nextToken().trim();
+		String author = st.nextToken().trim();
+		String publisher = st.nextToken().trim();
+		double price = Double.parseDouble(st.nextToken().trim());
+		int inventory = Integer.parseInt(st.nextToken().trim());
+		
+		Book book = this.insertBook(bookTitle, author, publisher, price, inventory);
 		return book;
 	}
 	
@@ -42,27 +56,9 @@ public class BookList
 	
 	public void display()
 	{
-		/*
-		Book[] sortedBooks = new Book[bookList.size()];
-		for(int i = 0; i < bookList.size(); i++) {
-			Book book = bookList.get(i);
-			boolean check = false;
-			for(int j = 0; j < i; j++) {
-				if(sortedBooks[j].getBookTitle().compareTo(book.getBookTitle()) > 0) {
-					for(int k = i; k > j; k--)
-						sortedBooks[k] = sortedBooks[k-1];
-					sortedBooks[j] = book;
-					check = true;
-					break;
-				}
-			}
-			if(!check)
-				sortedBooks[i] = book;
-		}
-		for(int i = 0; i < sortedBooks.length; i++)
-			System.out.println(sortedBooks[i].getBookTitle());
-		*/
+		System.out.println("----------- Books' titles -----------");
 		for(int i = 0; i < bookList.size(); i++)
 			System.out.println(bookList.get(i).getBookTitle());
+		System.out.println("-------------------------------------");
 	}
 }

@@ -15,57 +15,54 @@ public class Assignment03 {
 		while(scBook.hasNextLine()) {
 			try {
 				String line = scBook.nextLine();
-				StringTokenizer st = new StringTokenizer(line, "#"); 
-	            
-				String bookTitle = st.nextToken();
-				String author = st.nextToken();
-				String publisher = st.nextToken();
-				double price = Double.parseDouble((st.nextToken()));
-				int inventory = Integer.parseInt(st.nextToken());
-				
-				bookList.insertBook(bookTitle, author, publisher, price, inventory); 
+				bookList.insertBook(line); 
 			} catch(Exception e) {
-				System.out.println("Exception occured! ("+e+")");
+				System.out.println("Exception occured when processing " + bookFileName + " (" + e + ")");
 			} 
 		}
 		scBook.close();
 		
 		Scanner scInput = new Scanner(new File(inputFileName));
 		while(scInput.hasNextLine()) {
-			//try {
+			try {
 				String line = scInput.nextLine();
 				
 				String[] cmd_arg = line.split(" ", 2);
 				String cmd = cmd_arg[0];
 				
 				if(cmd.equals("search")) {
-					String arg = cmd_arg[1];
-					Book book;
-					if((book = bookList.searchBook(arg)) != null)
+					String arg = cmd_arg[1].trim();
+					Book book = bookList.searchBook(arg);
+					
+					if(book != null)
 						book.printBookInfo();
+					else
+						System.out.println("Unvalid book title!! ("+arg+")");
 				} else if(cmd.equals("buy")) {
-					String arg = cmd_arg[1];
-					bookList.buyBook(arg);
+					String arg = cmd_arg[1].trim();
+					Book book = bookList.searchBook(arg);
+					
+					if(book == null) {
+						System.out.println("Unvalid book title!! ("+arg+")");
+					} else {
+						if(bookList.buyBook(book) != null)
+							System.out.println("Buy Book ("+book.getBookTitle()+") success!!");
+						else 
+							System.out.println("Not in stock!! ("+book.getBookTitle()+")");
+					}
 				} else if(cmd.equals("insert")) {
-					String arg = cmd_arg[1];
-					StringTokenizer st = new StringTokenizer(arg, "#");
-					String bookTitle = st.nextToken();
-					String author = st.nextToken();
-					String publisher = st.nextToken();
-					double price = Double.parseDouble((st.nextToken()));
-					int inventory = Integer.parseInt(st.nextToken());
-					bookList.insertBook(bookTitle, author, publisher, price, inventory);
+					String arg = cmd_arg[1].trim();
+					Book book = bookList.insertBook(arg);
+					System.out.println("Insert Book ("+book.getBookTitle()+") success!!");
 				} else if(cmd.equals("display")) {
 					bookList.display();
 				} else {
 					System.out.println("else ("+cmd+")");
 				}
-			/*} catch(Exception e) {
-				System.out.println("Exception occured!! ("+e+")");
-			}*/
+			} catch(Exception e) {
+				System.out.println("Exception occured when processing " + inputFileName + " (" + e + ")");
+			}
 		}
-		scBook.close();
 		scInput.close();
-		
 	}
 }

@@ -1,4 +1,4 @@
 search Claudius the God
-buy life of Pi
+buy life of pi
 insert Yellow Star#Jennifer Roy#Two Lions#4.99#9
 display
