@@ -24,3 +24,6 @@ public class TestPanel extends Frame {
 }
 
 // p30
+
+// 일반용 계산기를 만든다. 
+// 근데 맨 위에 줄만 빼기.
