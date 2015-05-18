@@ -28,6 +28,9 @@ public class Calculator {
 	final int NONE = -1;
 	final int AFTERCALC = -2;
 	
+	final int MAX_POINT = 10;
+	final int MIN_POINT = -16;
+	
 	private int oper = NONE;
 	private double num[] = new double[]{0,0};
 	private int numIdx = 0;
@@ -35,7 +38,7 @@ public class Calculator {
 	
 	private Frame frame;
 	private Panel noticePanel;
-	private TextField progressField;
+	//private TextField progressField;
 	private TextField resultField;
 	private Panel controlPanel;
 	
@@ -52,27 +55,45 @@ public class Calculator {
 				//String command=e.getActionCommand();
 
 				if(NUM0 <= type && type <= NUM9){
-					if(numIdx == 0 && point[0] == AFTERCALC);
+					if(numIdx == 0 && oper == AFTERCALC) {
+						num[0] = 0;
+						point[0] = -1;
+						oper = NONE;
+					} 
+					if(point[numIdx] >= MAX_POINT || point[numIdx] <= MIN_POINT);
 					else if(point[numIdx] >= 0) {
 						point[numIdx]++;
 						num[numIdx] = num[numIdx] + Math.pow(10, -point[numIdx]) * (type - NUM0);
 					} else {
+						point[numIdx]--;
 						num[numIdx] = num[numIdx] * 10 + type - NUM0;
 					}
 				} else if(type == DOT){
-					if(numIdx == 0 && point[0] == AFTERCALC);
+					if(numIdx == 0 && oper == AFTERCALC) {
+						num[0] = 0;
+						point[0] = -1;
+						oper = NONE;
+					}
 					else if(point[numIdx] < 0 ) point[numIdx] = 0;
 				} else if(type == BACKSPACE){
-					if(numIdx == 0 && point[0] == AFTERCALC);
-					else if(point[numIdx] >= 0) {
-						num[numIdx] = (double)Math.floor(num[numIdx] * Math.pow(10, point[numIdx])) / Math.pow(10, point[numIdx]);
+					if(numIdx == 0 && oper == AFTERCALC);
+					else if(point[numIdx] == 0) {
+						num[numIdx] = Math.floor(num[numIdx]);
+						point[numIdx] = -1;
+					} else if(point[numIdx] > 0) {
+						num[numIdx] = Math.floor(num[numIdx]*Math.pow(10, point[numIdx]-1)) / Math.pow(10, point[numIdx]-1);
+						//num[numIdx] = Double.parseDouble(String.format("%."+(point[numIdx]-1)+"f", num[numIdx]));
 						point[numIdx]--;
-					} else {
-						num[numIdx] = num[numIdx]/10;
+					} else if(point[numIdx] == -1) {
+						num[numIdx] = Math.floor(num[numIdx]/10);
+					} else if(point[numIdx] < -1){
+						num[numIdx] = Math.floor(num[numIdx]/10);
+						point[numIdx]++;
 					}
 				} else if(type == CLEAREND){
 					num[numIdx] = 0;
 					point[numIdx] = -1;
+					if(numIdx == 0) oper = NONE;
 				} else if(type == CLEAR){
 					num[0] = num[1] = 0;
 					oper = NONE;
@@ -80,11 +101,14 @@ public class Calculator {
 					point[0] = point[1] = -1;
 				} else if(type == SIGN){
 					num[numIdx] = -num[numIdx];
+					if(numIdx == 0) oper = NONE;
 				} else if(type == ROOT){
 					num[numIdx] = Math.sqrt(num[numIdx]);
+					if(numIdx == 0) oper = NONE;
 				} else if(type == FRACTION){
 					num[numIdx] = 1.0/num[numIdx];
-					point[numIdx] = 9;
+					point[numIdx] = MAX_POINT;
+					if(numIdx == 0) oper = NONE;
 				} else if(ADD <= type && type <= MOD){
 					if(numIdx == 0 || oper == NONE) {
 						oper = type;
@@ -92,6 +116,8 @@ public class Calculator {
 						num[1] = 0;
 						point[1] = -1;
 						if(point[0] == 0) point[0] = 1;
+					} else if(numIdx == 1 && point[1] == -1 && oper != NONE && oper != AFTERCALC) {
+						oper = type;
 					} else {
 						try {
 							num[0] = calculate(num[0], num[1], oper);
@@ -99,7 +125,7 @@ public class Calculator {
 							num[1] = 0;
 							point[1] = -1;
 							numIdx = 1;
-							point[0] = 9;
+							point[0] = MAX_POINT;
 						} catch (Exception e1) {
 							System.out.println(e1);
 						}
@@ -111,42 +137,31 @@ public class Calculator {
 						try {
 							num[0] = calculate(num[0], num[1], oper);
 							oper = AFTERCALC;
-							//num[1] = 0;
 							numIdx = 0;
-							point[0] = 9;
+							point[0] = MAX_POINT;
 						} catch (Exception e1) {
 							System.out.println(e1);
 						}
 					}
 				} else {
-					// kikiki
 					System.out.println("huh?!");
 				}
-				
-				//if(point > 0) {
-					//if(numIdx == 0 || oper == NONE) num[0] = (double)Math.floor(num[0] * Math.pow(10, point)) / Math.pow(10, point);
-					//else num[1] = (double)Math.floor(num[1] * Math.pow(10, point)) / Math.pow(10, point);
-				//}
 				
 				String txt = "";
 				String operString[] = {"+","-","*","/","%"};
 				
 				if(numIdx == 0) {
-					if(point[0] < 0) txt += (int)num[0];
-					else if(point[0] == 0) txt += (int)num[0] + ".";
-					else txt += num[0];
+					if(point[0] < 0) txt += (long)num[0];
+					else if(point[0] == 0) txt += (long)num[0] + ".";
+					else txt += String.format("%."+point[0]+"f",num[0]);
 				} else if(numIdx == 1) {
-					if(point[0] < 0) txt += (int)num[0];
-					else if(point[0] == 0) txt += (int)num[0] + ".";
-					else txt += num[0];
-					if(point[1] < 0) txt += " " + operString[oper-ADD] + " " + (int)num[1];
-					else if(point[1] == 0)  txt += " " + operString[oper-ADD] + " " + (int)num[1] + ".";
-					else txt += " " + operString[oper-ADD] + " " + num[1];
-				} /*else if(numIdx == 1) {
-					if(point[0] < 0) txt += (int)num[0];
-					else if(point[0] == 0) txt += (int)num[0] + ".";
-					else txt += num[0];
-				} */else {
+					if(point[0] < 0) txt += (long)num[0];
+					else if(point[0] == 0) txt += (long)num[0] + ".";
+					else txt += String.format("%."+point[0]+"f",num[0]);
+					if(point[1] < 0) txt += " " + operString[oper-ADD] + " " + (long)num[1];
+					else if(point[1] == 0)  txt += " " + operString[oper-ADD] + " " + (long)num[1] + ".";
+					else txt += " " + operString[oper-ADD] + " " + String.format("%."+point[1]+"f",num[1]);
+				} else {
 					txt = "fuck?!";
 				}
 				resultField.setText(txt);	
@@ -184,10 +199,8 @@ public class Calculator {
 			}        
 		});
 		
-		progressField = new TextField("0", 35);
 		resultField = new TextField("0", 35);
 		noticePanel = makeNoticePanel(300,100);
-		noticePanel.add(progressField);
 		noticePanel.add(resultField);
 		
 		controlPanel = makeControlPanel(300,300);
@@ -195,7 +208,6 @@ public class Calculator {
 		frame.add(noticePanel, BorderLayout.NORTH);
 		frame.add(controlPanel, BorderLayout.CENTER);
 		
-		//frame.pack();
 		frame.setVisible(true);
 	}
 	
@@ -203,7 +215,7 @@ public class Calculator {
 		Panel panel = new Panel();
 		panel.setBackground(Color.WHITE);
 		panel.setSize(width, height);
-		panel.setLayout(new GridLayout(2,1));  
+		panel.setLayout(new GridLayout(1,1));  
 		
 		return panel;
 	}
