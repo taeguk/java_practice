@@ -1,7 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 
-// Calcurator Class
+// Calculator Class
 public class Calculator {
 	// constant for action and status
 	// number 0-9
@@ -48,7 +48,7 @@ public class Calculator {
 	private double num[] = new double[] { 0, 0 };
 	// now processing operand number index
 	private int numIdx = 0;
-	// operands' point infomation
+	// operands' point information
 	private int point[] = { -1, -1 };
 
 	// frame
@@ -303,7 +303,7 @@ public class Calculator {
 		}
 	}
 
-	// contructor
+	// constructor
 	public Calculator() {
 		prepareUI();
 	}
