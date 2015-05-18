@@ -30,7 +30,7 @@ public class Calculator {
 	private int oper = NONE;
 	private double num[] = new double[]{0,0};
 	private int numIdx = 0;
-	private int point = -1;
+	private int point[] = {-1,-1};
 	
 	private Frame frame;
 	private Panel noticePanel;
@@ -48,54 +48,108 @@ public class Calculator {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String command=e.getActionCommand();
+				//String command=e.getActionCommand();
 
 				if(NUM0 <= type && type <= NUM9){
-					if(point >= 0) {
-						point++;
-						num[numIdx] = num[numIdx] + Math.pow(10, -point) * (type - NUM0);
+					if(point[numIdx] >= 0) {
+						point[numIdx]++;
+						num[numIdx] = num[numIdx] + Math.pow(10, -point[numIdx]) * (type - NUM0);
 					} else {
 						num[numIdx] = num[numIdx] * 10 + type - NUM0;
 					}
 				} else if(type == DOT){
-					if(point < 0 ) point = 0;
+					if(point[numIdx] < 0 ) point[numIdx] = 0;
 				} else if(type == BACKSPACE){
-					if(point >= 0) {
-						num[numIdx] = (double)Math.round(num[numIdx] * Math.pow(10, point)) / Math.pow(10, point);
-						point--;
+					if(point[numIdx] >= 0) {
+						num[numIdx] = (double)Math.floor(num[numIdx] * Math.pow(10, point[numIdx])) / Math.pow(10, point[numIdx]);
+						point[numIdx]--;
 					} else {
 						num[numIdx] = num[numIdx]/10;
 					}
 				} else if(type == CLEAREND){
 					num[numIdx] = 0;
-					point = -1;
+					point[numIdx] = -1;
 				} else if(type == CLEAR){
 					num[0] = num[1] = 0;
+					oper = NONE;
 					numIdx = 0;
-					point = -1;
+					point[0] = point[1] = -1;
 				} else if(type == SIGN){
 					num[numIdx] = -num[numIdx];
 				} else if(type == ROOT){
 					num[numIdx] = Math.sqrt(num[numIdx]);
 				} else if(type == FRACTION){
 					num[numIdx] = 1.0/num[numIdx];
-				} else if(type == ADD){
-					if(numIdx == 0) {
-						oper = ADD;
-						numIdx++;
-						point = -1;
+					point[numIdx] = 9;
+				} else if(ADD <= type && type <= MOD){
+					if(numIdx == 0 || oper == NONE) {
+						oper = type;
+						numIdx = 1;
+						num[1] = 0;
+						point[1] = -1;
+						if(point[0] == 0) point[0] = 1;
 					} else {
-						calculate(num[0], num[1], oper);
+						try {
+							num[0] = calculate(num[0], num[1], oper);
+							oper = type;
+							num[1] = 0;
+							point[1] = -1;
+							numIdx = 1;
+							point[0] = 9;
+						} catch (Exception e1) {
+							System.out.println(e1);
+						}
 					}
-				} else if(type == FRACTION){
-					num[numIdx] = 1.0/num[numIdx];
-				} else if(type == FRACTION){
-					num[numIdx] = 1.0/num[numIdx];
+				} else if(type == CALC){
+					if(numIdx == 0) {
+						if(point[0] == 0) point[0]++;
+					} else {
+						try {
+							num[0] = calculate(num[0], num[1], oper);
+							oper = NONE;
+							num[1] = 0;
+							numIdx = 1;
+							point[0] = 9;
+						} catch (Exception e1) {
+							System.out.println(e1);
+						}
+					}
+				} else {
+					// kikiki
+					System.out.println("huh?!");
 				}
+				
+				//if(point > 0) {
+					//if(numIdx == 0 || oper == NONE) num[0] = (double)Math.floor(num[0] * Math.pow(10, point)) / Math.pow(10, point);
+					//else num[1] = (double)Math.floor(num[1] * Math.pow(10, point)) / Math.pow(10, point);
+				//}
+				
+				String txt = "";
+				String operString[] = {"+","-","*","/","%"};
+				
+				if(numIdx == 0 && oper == NONE) {
+					if(point[0] < 0) txt += (int)num[0];
+					else if(point[0] == 0) txt += (int)num[0] + ".";
+					else txt += num[0];
+				} else if(numIdx == 1 && oper != NONE) {
+					if(point[0] < 0) txt += (int)num[0];
+					else if(point[0] == 0) txt += (int)num[0] + ".";
+					else txt += num[0];
+					if(point[1] < 0) txt += " " + operString[oper-ADD] + " " + (int)num[1];
+					else if(point[1] == 0)  txt += " " + operString[oper-ADD] + " " + (int)num[1] + ".";
+					else txt += " " + operString[oper-ADD] + " " + num[1];
+				} else if(numIdx == 1 && oper == NONE) {
+					if(point[0] < 0) txt += (int)num[0];
+					else if(point[0] == 0) txt += (int)num[0] + ".";
+					else txt += num[0];
+				} else {
+					txt = "fuck?!";
+				}
+				resultField.setText(txt);	
 			}
 		}
 	
-	public double calculate(double num1, double num2, int oper) {
+	public double calculate(double num1, double num2, int oper) throws Exception {
 		switch(oper) {
 		case ADD:
 			return num1 + num2;
@@ -108,7 +162,7 @@ public class Calculator {
 		case MOD:
 			return num1 % num2;
 		default:
-			return 0.0;
+			throw new Exception("Invalid code flow!");
 		}
 	}
 		
@@ -126,8 +180,8 @@ public class Calculator {
 			}        
 		});
 		
-		progressField = new TextField("text", 35);
-		resultField = new TextField("text", 35);
+		progressField = new TextField("0", 35);
+		resultField = new TextField("0", 35);
 		noticePanel = makeNoticePanel(300,100);
 		noticePanel.add(progressField);
 		noticePanel.add(resultField);
