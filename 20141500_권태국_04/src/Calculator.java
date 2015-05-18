@@ -26,6 +26,7 @@ public class Calculator {
 	final int MOD = 21;
 	final int CALC = 22;
 	final int NONE = -1;
+	final int AFTERCALC = -2;
 	
 	private int oper = NONE;
 	private double num[] = new double[]{0,0};
@@ -51,16 +52,19 @@ public class Calculator {
 				//String command=e.getActionCommand();
 
 				if(NUM0 <= type && type <= NUM9){
-					if(point[numIdx] >= 0) {
+					if(numIdx == 0 && point[0] == AFTERCALC);
+					else if(point[numIdx] >= 0) {
 						point[numIdx]++;
 						num[numIdx] = num[numIdx] + Math.pow(10, -point[numIdx]) * (type - NUM0);
 					} else {
 						num[numIdx] = num[numIdx] * 10 + type - NUM0;
 					}
 				} else if(type == DOT){
-					if(point[numIdx] < 0 ) point[numIdx] = 0;
+					if(numIdx == 0 && point[0] == AFTERCALC);
+					else if(point[numIdx] < 0 ) point[numIdx] = 0;
 				} else if(type == BACKSPACE){
-					if(point[numIdx] >= 0) {
+					if(numIdx == 0 && point[0] == AFTERCALC);
+					else if(point[numIdx] >= 0) {
 						num[numIdx] = (double)Math.floor(num[numIdx] * Math.pow(10, point[numIdx])) / Math.pow(10, point[numIdx]);
 						point[numIdx]--;
 					} else {
@@ -106,9 +110,9 @@ public class Calculator {
 					} else {
 						try {
 							num[0] = calculate(num[0], num[1], oper);
-							oper = NONE;
-							num[1] = 0;
-							numIdx = 1;
+							oper = AFTERCALC;
+							//num[1] = 0;
+							numIdx = 0;
 							point[0] = 9;
 						} catch (Exception e1) {
 							System.out.println(e1);
@@ -127,22 +131,22 @@ public class Calculator {
 				String txt = "";
 				String operString[] = {"+","-","*","/","%"};
 				
-				if(numIdx == 0 && oper == NONE) {
+				if(numIdx == 0) {
 					if(point[0] < 0) txt += (int)num[0];
 					else if(point[0] == 0) txt += (int)num[0] + ".";
 					else txt += num[0];
-				} else if(numIdx == 1 && oper != NONE) {
+				} else if(numIdx == 1) {
 					if(point[0] < 0) txt += (int)num[0];
 					else if(point[0] == 0) txt += (int)num[0] + ".";
 					else txt += num[0];
 					if(point[1] < 0) txt += " " + operString[oper-ADD] + " " + (int)num[1];
 					else if(point[1] == 0)  txt += " " + operString[oper-ADD] + " " + (int)num[1] + ".";
 					else txt += " " + operString[oper-ADD] + " " + num[1];
-				} else if(numIdx == 1 && oper == NONE) {
+				} /*else if(numIdx == 1) {
 					if(point[0] < 0) txt += (int)num[0];
 					else if(point[0] == 0) txt += (int)num[0] + ".";
 					else txt += num[0];
-				} else {
+				} */else {
 					txt = "fuck?!";
 				}
 				resultField.setText(txt);	
