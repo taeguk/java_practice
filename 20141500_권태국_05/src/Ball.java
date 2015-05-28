@@ -115,11 +115,18 @@ class Ball extends Thread {
 						getBalls().add(nBall);
 					}
 					
-					System.out.println("[log] ball num = " + getBalls().size() + ", balls.get(0).xSize = " + getBalls().get(0).xSize);
 					oBall.interrupt();
+					
+					try {
+						System.out.println("[log] ball num = " + getBalls().size() + ", balls.get(0).xSize = " + getBalls().get(0).xSize);
+					} catch(Exception e) {
+						// Do nothing
+					}
+					
 					if(getBalls().size() <= 1) {
 						System.exit(0);
 					}
+					
 					return;
 				}
 				Thread.sleep(5);
