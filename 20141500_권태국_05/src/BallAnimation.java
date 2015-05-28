@@ -6,7 +6,7 @@ import java.util.Iterator;
 public class BallAnimation extends Frame implements ActionListener {
 	private static final int BALL_NUM = 5;
 	private Canvas canvas;
-	private ArrayList<Ball> balls = new ArrayList<Ball>(BALL_NUM);
+	public static ArrayList<Ball> balls = new ArrayList<Ball>(BALL_NUM);
 
 	public BallAnimation() {
 		canvas = new Canvas();
@@ -25,7 +25,8 @@ public class BallAnimation extends Frame implements ActionListener {
 		Graphics g = canvas.getGraphics();
 		//ClearCanvas cc = new ClearCanvas(canvas);
 		//cc.start();
-		if (evt.getActionCommand() == "Start") {			
+		//cc.setPriority(Thread.MAX_PRIORITY);
+		if (evt.getActionCommand() == "Start") {
 			Ball ball;
 			for(Iterator<Ball> itr = balls.iterator(); itr.hasNext();) {
 				ball = itr.next();

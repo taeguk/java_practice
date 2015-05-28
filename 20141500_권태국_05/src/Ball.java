@@ -1,4 +1,5 @@
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -10,15 +11,7 @@ class Ball extends Thread {
 	public static final double MIN_XSIZE = 1.0;
 	public static final double MIN_YSIZE = 1.0;
 	
-	private static ArrayList<Double> xArr = new ArrayList<Double>();
-	private static ArrayList<Double> yArr = new ArrayList<Double>();
-	private static ArrayList<Double> xSizeArr = new ArrayList<Double>();
-	private static ArrayList<Double> ySizeArr = new ArrayList<Double>();
-	private static Stack<Integer> idxStack = new Stack<Integer>();
-	private static int cnt = 0;
-	
 	private Canvas box;
-	private int idx;
 	private double xSize = INIT_XSIZE;
 	private double ySize = INIT_YSIZE;
 	private double x;
@@ -34,38 +27,35 @@ class Ball extends Thread {
 		this.y = y;
 		this.xSize = xSize;
 		this.ySize = ySize;
-		
-		if(idxStack.isEmpty()) {
-			idx = cnt++;
-		} else {
-			idx = idxStack.pop();
-		}
-		xArr.add(idx, this.x);
-		yArr.add(idx, this.y);
-		xSizeArr.add(idx, this.x);
-		ySizeArr.add(idx, this.y);
 	}
 	
-	public int checkCollision() {
-		for(int i = 0; i < cnt; i++) {
+	synchronized public ArrayList<Ball> getBalls() {
+		return BallAnimation.balls;
+	}
+	
+	synchronized public Ball checkCollision() {
+		int idx = getBalls().indexOf(this);
+		for(int i = 0; i < getBalls().size(); i++) {
 			if(i == idx) continue;
-			double dist = Math.sqrt((x-xArr.get(i))*(x-xArr.get(i)) + (y-yArr.get(i))*(y-yArr.get(i)));
-			double d = dist - xSize / 2 - ySize / 2;
+			Ball ball = getBalls().get(i);
+			double dist = Math.sqrt((x-ball.x)*(x-ball.x) + (y-ball.y)*(y-ball.y));
+			double d = dist - xSize / 2 - ball.xSize / 2;
 			if(d <= 0) {
-				return i;
+				return ball;
 			}
 		}
-		return -1;
+		return null;
 	}
 
-	public void draw() {
+	synchronized public void draw() {
 		Graphics g = box.getGraphics();
 		g.fillOval((int)x, (int)y, (int)xSize, (int)ySize);
 		g.dispose();
 	}
 
-	public void move() {
+	synchronized public void move() {
 		Graphics g = box.getGraphics();
+
 		g.setXORMode(box.getBackground());
 		g.fillOval((int)x, (int)y, (int)xSize, (int)ySize);
 		x += dx;
@@ -87,25 +77,56 @@ class Ball extends Thread {
 			y = d.height - ySize;
 			dy = -dy;
 		}
+		g.setPaintMode();
 		g.fillOval((int)x, (int)y, (int)xSize, (int)ySize);
 		g.dispose();
 	}
 
-	public void run() {
-		int oIdx;
+	synchronized public void run() {
+		Ball oBall, nBall;
 		draw();
-		while(!!!!!!!!!!!!!!!false) {
-			move();
-			haaam++;
-			if(haaam >= 20 && (oIdx=checkCollision()) >= 0 && xSize/2 >= Ball.MIN_XSIZE) {
-				new Ball(box, x, y, xSize/2, ySize/2);
-				new Ball(box, x, y, xSize/2, ySize/2);
-			}
-			try {
+		try {
+			while(!!!!!!!!!!!!!!!false) {
+				move();
+				haaam++;
+				if(haaam >= 200 && (oBall=checkCollision()) != null) {
+					getBalls().remove(this);
+					getBalls().remove(oBall);
+					
+					Graphics g = box.getGraphics();
+					g.setXORMode(box.getBackground());
+					g.fillOval((int)x, (int)y, (int)xSize, (int)ySize);
+					g.fillOval((int)oBall.x, (int)oBall.y, (int)oBall.xSize, (int)oBall.ySize);
+					
+					if(xSize/2 >= Ball.MIN_XSIZE) {
+						nBall = new Ball(box, x, y, xSize/2, ySize/2);
+						nBall.start();
+						getBalls().add(nBall);
+						nBall = new Ball(box, x, y, xSize/2, ySize/2);
+						nBall.start();
+						getBalls().add(nBall);
+					}
+					if(oBall.xSize/2 >= Ball.MIN_XSIZE) {
+						nBall = new Ball(box, oBall.x, oBall.y, oBall.xSize/2, oBall.ySize/2);
+						nBall.start();
+						getBalls().add(nBall);
+						nBall = new Ball(box, oBall.x, oBall.y, oBall.xSize/2, oBall.ySize/2);
+						nBall.start();
+						getBalls().add(nBall);
+					}
+					
+					System.out.println("[log] ball num = " + getBalls().size() + ", balls.get(0).xSize = " + getBalls().get(0).xSize);
+					oBall.interrupt();
+					if(getBalls().size() <= 1) {
+						System.exit(0);
+					}
+					return;
+				}
 				Thread.sleep(5);
-			} catch (InterruptedException e) {
-				return;
 			}
+		} catch (InterruptedException e) {
+			return;
 		}
+		
 	}
 }
